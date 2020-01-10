@@ -1,16 +1,8 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <bass.h>
 #include <bassflac.h>
-
-void cpuusage()
-{
-	float cpuusage(BASS_GetCPU());
-	std::cout << "current cpu % used by bass is ";
-	std::cout << cpuusage;
-	std::cout << '\n';
-	return;
-}
 
 void stats()
 {
@@ -26,34 +18,67 @@ void stats()
 	return;
 }
 
+void cpuusage()
+{
+	float cpuusage(BASS_GetCPU());
+	std::cout << "current cpu % used by bass is ";
+	std::cout << cpuusage;
+	std::cout << '\n';
+	return;
+}
+
+void playflac()
+{
+	std::cout << "loading file \n";
+	HSTREAM stream = BASS_FLAC_StreamCreateFile(FALSE, "test.FLAC", 0, 0, 0);
+	BASS_ChannelPlay(stream, true);
+	for (;;)
+	{
+		cpuusage();
+	}
+}
+
+void playmp3()
+{
+	std::cout << "loading file \n";
+	HSTREAM stream = BASS_StreamCreateFile(FALSE, "test.mp3", 0, 0, 0);
+	BASS_ChannelPlay(stream, true);
+	for (;;)
+	{
+		cpuusage();
+	}
+}
+
 int main()
 {
-	stats();
 	BASS_Free();
+	BASS_Init(-1, 48000, 0, 0, 0);
 	DWORD32 bassversion(BASS_GetVersion());
 	std::cout << "running bass version ";
 	std::cout << bassversion;
 	std::cout << '\n';
-	if (!BASS_Init(-1, 48000, 0, 0, 0))
-		return 0;
-	std::cout << "loading file \n";
-	HSTREAM stream = BASS_FLAC_StreamCreateFile(FALSE, "test.FLAC", 0, 0, 0);
-	BASS_ChannelPlay(stream, true);
-	for (;;) 
+	int sami;
+	std::cout << "1 for mp3, 2 for flac, 3 for information, anything else for exit \n";
+	std::cin >> sami;
+	std::cin.ignore();
+	std::cout << '\n';
+	switch (sami)
 	{
-		cpuusage();
+		case 1:
+			std::cout << '\n';
+			playmp3();
+			break;
+		case 2:
+			std::cout << 'n';
+			playflac();
+			break;
+		case 3:
+			stats();
+			break;
+		default:
+			BASS_Free();
+			return 0;
 	}
-
-	
-
-
-
-
-
-
-
-
-
 	BASS_Free();
 	return 0;
 }

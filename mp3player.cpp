@@ -1,6 +1,16 @@
 #include <iostream>
 #include <string>
 #include <bass.h>
+#include <bassflac.h>
+
+void cpuusage()
+{
+	float cpuusage(BASS_GetCPU());
+	std::cout << "current cpu % used by bass is ";
+	std::cout << cpuusage;
+	std::cout << '\n';
+	return;
+}
 
 void stats()
 {
@@ -13,23 +23,28 @@ void stats()
 	std::cout << "current volume is ";
 	std::cout << volume;
 	std::cout << '\n';
-	float cpuusage(BASS_GetCPU());
-	std::cout << "current cpu % used by bass is ";
-	std::cout << cpuusage;
-	std::cout << '\n';
 	return;
 }
 
 int main()
 {
+	stats();
 	BASS_Free();
 	DWORD32 bassversion(BASS_GetVersion());
 	std::cout << "running bass version ";
 	std::cout << bassversion;
 	std::cout << '\n';
-	BASS_Init(-1, 48000, 0, 0, NULL);
-	stats();
+	if (!BASS_Init(-1, 48000, 0, 0, 0))
+		return 0;
+	std::cout << "loading file \n";
+	HSTREAM stream = BASS_FLAC_StreamCreateFile(FALSE, "test.FLAC", 0, 0, 0);
+	BASS_ChannelPlay(stream, true);
+	for (;;) 
+	{
+		cpuusage();
+	}
 
+	
 
 
 

@@ -23,5 +23,8 @@
     <Library Include="..\..\..\Downloads\bass24\c\bass.lib">
       <Filter>Source Files</Filter>
     </Library>
+    <Library Include="..\..\..\Downloads\bass24\c\bassflac.lib">
+      <Filter>Source Files</Filter>
+    </Library>
   </ItemGroup>
 </Project>

@@ -50,36 +50,29 @@ void stats()
 	std::cout << "current sample rate is ";
 	std::cout << info.freq;
 	std::cout << '\n';
-	float volume(BASS_GetVolume());
-	std::cout << "current volume is ";
-	std::cout << volume;
-	std::cout << '\n';
-	return;
-}
-
-void cpuusage()
-{
-	float cpuusage(BASS_GetCPU());
-	std::cout << "current cpu % used by bass is ";
-	std::cout << cpuusage;
-	std::cout << '\n';
 	return;
 }
 
 void playflac()
 {
-	std::cout << "loading file \n";
-	HSTREAM stream = BASS_FLAC_StreamCreateFile(FALSE, "test.FLAC", 0, 0, BASS_STREAM_PRESCAN);
+
+	std::cout << "enter filename then press enter key \n";
+	std::string filename;
+	std::cin >> filename;
+	std::cin.ignore();
+	HSTREAM stream = BASS_FLAC_StreamCreateFile(FALSE, filename.c_str(), 0, 0, BASS_STREAM_PRESCAN);
+	QWORD totaltimebyte = BASS_ChannelGetLength(stream, BASS_POS_BYTE);
+	int totaltime = BASS_ChannelBytes2Seconds(stream, totaltimebyte);
 	BASS_ChannelPlay(stream, true);
 	clearscreen();
-	std::cout << "playing file \n";
+	std::cout << "playing flac \n";
+	std::cout << "0 / " << totaltime << '\n';
 
 	while (BASS_ChannelIsActive(stream) == BASS_ACTIVE_PLAYING)
 	{
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 		clearscreen();
-		QWORD totaltimebyte = BASS_ChannelGetLength(stream, BASS_POS_BYTE);
-		int totaltime = BASS_ChannelBytes2Seconds(stream, totaltimebyte);
+		std::cout << "playing flac \n";
 		QWORD currenttimebyte = BASS_ChannelGetPosition(stream, BASS_POS_BYTE);
 		int currenttime = BASS_ChannelBytes2Seconds(stream, currenttimebyte);
 		std::cout << currenttime << " / " << totaltime << '\n';
@@ -90,18 +83,24 @@ void playflac()
 
 void playmp3()
 {
-	std::cout << "loading file \n";
-	HSTREAM stream = BASS_StreamCreateFile(FALSE, "test.mp3", 0, 0, BASS_STREAM_PRESCAN);
+
+	std::cout << "enter filename then press enter key \n";
+	std::string filename;
+	std::cin >> filename;
+	std::cin.ignore();
+	HSTREAM stream = BASS_StreamCreateFile(FALSE, filename.c_str(), 0, 0, BASS_STREAM_PRESCAN);
+	QWORD totaltimebyte = BASS_ChannelGetLength(stream, BASS_POS_BYTE);
+	int totaltime = BASS_ChannelBytes2Seconds(stream, totaltimebyte);
 	BASS_ChannelPlay(stream, true);
 	clearscreen();
-	std::cout << "playing file \n";
-
+	std::cout << "playing mp3 \n";
+	std::cout << "0 / " << totaltime << '\n';
+	
 	while( BASS_ChannelIsActive(stream) == BASS_ACTIVE_PLAYING )
 	{
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 		clearscreen();
-		QWORD totaltimebyte = BASS_ChannelGetLength(stream, BASS_POS_BYTE);
-		int totaltime = BASS_ChannelBytes2Seconds(stream, totaltimebyte);
+		std::cout << "playing mp3 \n";
 		QWORD currenttimebyte = BASS_ChannelGetPosition(stream, BASS_POS_BYTE);
 		int currenttime = BASS_ChannelBytes2Seconds(stream, currenttimebyte);
 		std::cout << '\r' << currenttime << " / " << totaltime << '\n';
@@ -118,7 +117,9 @@ int main()
 	std::cout << "running bass version ";
 	std::cout << bassversion;
 	std::cout << '\n';
+	// shoutout to sami and shawnmb and peskypotato
 	int sami;
+	std::cout << "make your selection then press enter \n";
 	std::cout << "1 for mp3, 2 for flac, 3 for information, anything else for exit \n";
 	std::cin >> sami;
 	std::cin.ignore();
@@ -130,7 +131,7 @@ int main()
 			playmp3();
 			break;
 		case 2:
-			std::cout << 'n';
+			std::cout << '\n';
 			playflac();
 			break;
 		case 3:
